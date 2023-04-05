@@ -34,7 +34,7 @@ RUNNING_IN_BINDER = os.environ.get('BINDER_SERVICE_HOST') is not None
 if RUNNING_IN_BINDER:
     JupyterDash.infer_jupyter_proxy_config()
 else:
-    app_conf.update({'host': 'localhost', 'port': 9235})
+    app_conf.update({'host': 'localhost', 'port': 8051})
 
 # Below there are id's of Dash JS components.
 # The components themselves are declared in the dashboard layout (see the function get_dashboard_layout).

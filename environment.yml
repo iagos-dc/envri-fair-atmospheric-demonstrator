@@ -4,8 +4,9 @@ channels:
 dependencies:
   - python>=3.7
   - pip
+  - flask=2.0.3
   - requests
-  - numpy
+  - numpy=1.23.2
   - scipy
   - netcdf4
   - pydap
@@ -13,7 +14,7 @@ dependencies:
   - xarray
   - plotly>=5.4
   - dash>=2.0,<2.1
-  - dash-bootstrap-components
+  - dash-bootstrap-components=1.2.1
   - jupyter-dash
   - folium
   - ipykernel==5.5.5
