@@ -188,7 +188,7 @@ def get_iadc_datasets():
     response = requests.get(query)
 
     table = response.json()['table']
-    index = table['columnNames'].index('Dataset ID') # PerchÃ© il JSON Ã¨ formattato cosÃ¬
+    index = table['columnNames'].index('Dataset ID') # Perché il JSON è formattato così
     for row in table['rows']:
       datasets.append(row[index])
     
