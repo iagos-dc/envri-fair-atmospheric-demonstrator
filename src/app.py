@@ -573,7 +573,6 @@ def get_timeseries_figure(datasets_json, selected_variables, selected_row_ids, t
     dfs={}
     for id in selected_row_ids:
         s = datasets_df.loc[id]
-        #try:
         pnsd = False
         ds, dataset_id = data_access.read_dataset(s['RI'], s['url'], s)
         if s['RI'].lower() == "actris":

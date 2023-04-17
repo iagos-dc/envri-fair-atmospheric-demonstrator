@@ -91,6 +91,9 @@ def _get_stations(ris=None):
                 stations_df = pd.read_pickle(cache_path)
             except FileNotFoundError:
                 stations = ri_query_module.get_list_platforms()
+                res = [i for i in stations if not (i['short_name'] == 'CCT')]
+                stations = res
+                
                 stations_df = pd.DataFrame.from_dict(stations)
                 stations_df.to_pickle(cache_path)
                 
