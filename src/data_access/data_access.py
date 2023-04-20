@@ -14,6 +14,7 @@ import itertools
 import xarray as xr
 from mmappickle.dict import mmapdict
 import re
+import hashlib
 
 from . import helper
 from . import query_actris
@@ -77,9 +78,7 @@ def _get_ri_query_module_by_ri(ris=None):
             raise ValueError(f'ri={ri}')
     return ri_query_module_by_ri
 
-
 _ri_query_module_by_ri = _get_ri_query_module_by_ri()
-
 
 def _get_stations(ris=None):
     ri_query_module_by_ri = _get_ri_query_module_by_ri(ris)
@@ -343,7 +342,7 @@ def _get_sios_datasets(variables, bbox, period):
     if not datasets:
         return None
     for ds in datasets:
-        ds['time_period'][1] = datetime.datetime.today().strftime('%Y-%m-%dT%H:%M:%S') #'2021-01-31T23:00:00Z'
+        ds['time_period'][1] = datetime.datetime.today().strftime('%Y-%m-%dT%H:%M:%SZ') #'2021-01-31T23:00:00Z'
     datasets_df = pd.DataFrame.from_dict(datasets)
     datasets_df['RI'] = 'SIOS'
     return datasets_df
@@ -396,12 +395,16 @@ def filter_datasets_on_vars(datasets_df, var_codes):
     return datasets_df[mask]
 
 def generate_id(url):
-    return re.sub(r"[^a-z0-9]","",url.lower())
+    return getHash(url)
 
 def get_dataset_from_cache(ri, id):
+    ri = ri.lower()
     cache_path = CACHE_DIR / f'data_{ri}.pkl'
     m = mmapdict(str(cache_path))
-    return m[id]
+    if id in m:
+        return m[id]
+    else:
+        return None
 
 def read_dataset(ri, url, ds_metadata):
     if isinstance(url, (list, tuple)):
@@ -429,7 +432,7 @@ def read_dataset(ri, url, ds_metadata):
 
     ri = ri.lower()
     
-    # generating unique identifier for the dataset from URL, lower and removing special characters.
+    # generating unique identifier for the dataset (calculating hash).
     dataset_id = generate_id(url)
     cache_path = CACHE_DIR / f'data_{ri}.pkl'
     m = mmapdict(str(cache_path))
@@ -487,6 +490,9 @@ def read_dataset(ri, url, ds_metadata):
         for v, da in ds.items():
             res[v] = da
     return res, dataset_id
+
+def getHash(s):
+    return hashlib.sha256(bytes(s, encoding='utf-8')).hexdigest()
         
 #! same order as in _RIs
 _GET_DATASETS_BY_RI.update(zip(_RIS, (_get_actris_datasets, _get_iagos_datasets, _get_icos_datasets, _get_sios_datasets)))
